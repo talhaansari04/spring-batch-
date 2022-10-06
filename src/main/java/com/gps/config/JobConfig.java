@@ -2,7 +2,6 @@ package com.gps.config;
 
 import com.gps.model.OecEntity;
 import com.gps.oecbatch.OecItemProcessor;
-import com.gps.oecbatch.OecItemReader;
 import com.gps.repository.OecRepo;
 import com.gps.util.JobConstant;
 import org.springframework.batch.core.Job;
@@ -10,7 +9,6 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
@@ -56,11 +54,6 @@ public class JobConfig {
     @Bean
     public OecItemProcessor oecItemProcessor() {
         return new OecItemProcessor();
-    }
-
-    @Bean
-    public OecItemReader oecItemReader() {
-        return new OecItemReader();
     }
 
     @Bean
