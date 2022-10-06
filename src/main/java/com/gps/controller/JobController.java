@@ -11,6 +11,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,8 +24,8 @@ public class JobController {
     private Job job;
 
     @PostMapping(path = "job")
-    public void triggered(){
-        JobParameters jobParameter=new JobParametersBuilder()
+    public void triggered(@RequestParam(name = "filename") String fileName){
+        JobParameters jobParameter=new JobParametersBuilder().addString("filePath",fileName)
                 .addLong("startAt",System.currentTimeMillis()).toJobParameters();
         try {
             jobLauncher.run(job,jobParameter);

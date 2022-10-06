@@ -8,6 +8,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -16,6 +17,7 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -44,7 +46,7 @@ public class JobConfig {
     public Step step() {
         return stepBuilderFactory
                 .get(JobConstant.OEC_STEP).<OecEntity, OecEntity>chunk(5)
-                .reader(fileItemReader())
+                .reader(fileItemReader(null))
                 .processor(oecItemProcessor())
                 .writer(oecRepositoryItemWriter())
                 .build();
@@ -63,10 +65,11 @@ public class JobConfig {
         repositoryItemWriter.setMethodName("save");
         return repositoryItemWriter;
     }
+    @JobScope
     @Bean
-    public FlatFileItemReader<OecEntity> fileItemReader(){
+    public FlatFileItemReader<OecEntity> fileItemReader(@Value("#{jobParameters['filePath']}") String filePath){
         FlatFileItemReader<OecEntity> fileItemReader=new FlatFileItemReader<>();
-        fileItemReader.setResource(new FileSystemResource("src/main/resources/oec.csv"));
+        fileItemReader.setResource(new FileSystemResource("src/main/resources/"+filePath+".csv"));
         fileItemReader.setLineMapper(defaultLineMapper());
         return fileItemReader;
     }
